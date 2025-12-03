@@ -3,6 +3,15 @@
 STORED PROCEDURE: LOADING BRONZE LAYER(SOURCE -> BRONZE)
 ===================================================================
 Script Purpose: 
+This script creates a stored procedure which allows the bronze 
+layer to be loaded from the CSV files.
+Actions performed in this script include:
+	- Truncating the tables before inserting them to avooid 
+	  duplicates.
+	- Uses 'BULK INSERT' to load CSV files into the tables.
+
+Since this code itself does not deliver any output the query:
+'EXEC bronze.load_bronze;' must be used.
 */
 
 CREATE OR ALTER PROCEDURE bronze.load_bronze AS 
