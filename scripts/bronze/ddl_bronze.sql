@@ -3,7 +3,7 @@
 DDL SCRIPTS: CREATING ALL 6 TABLES
 ===================================================================
 Script purpose:
-This script creates tables in the "bronze" schema as well as drops
+This script creates tables in the 'bronze' schema as well as drops
 existing tables of the same name if they already exist. So this 
 script can be run to create the tables as well as redefine the 
 tables 
