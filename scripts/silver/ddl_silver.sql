@@ -1,97 +1,96 @@
 /*
 ===================================================================
-crm_cust_info
+DDL SCRIPTS: CREATING SILVER LAYER TABLES
 ===================================================================
+Script purpose:
+This script creates 'silver' schema tables as well as drops the
+tables before recreating them if they already exist. 
+This basically re-defines the DDL structure from the 'bronze' 
+layer.
 */
 
---Check for nulls and/or duplicates in the primary key
---Ideally we do not want nulls and/or duplicates
-SELECT 
-	cst_id,
-	COUNT(*)
-FROM silver.crm_cust_info
-GROUP BY cst_id
-HAVING COUNT(*) > 1 or cst_id IS NULL
+IF OBJECT_ID('silver.crm_cust_info') IS NOT NULL 
+	DROP TABLE silver.crm_cust_info;
+GO
 
---Check for unwanted spaces within the data
---Ideally we do not want any trailing or leading unwanted spaces
-SELECT 
-	cst_firstname
-FROM silver.crm_cust_info
-WHERE cst_firstname != TRIM(cst_firstname)
+CREATE TABLE silver.crm_cust_info(
+cst_id INT,
+cst_key NVARCHAR(50),
+cst_firstname NVARCHAR(50),
+cst_lastname NVARCHAR(50),
+cst_material_status NVARCHAR(50),
+cst_gender NVARCHAR(50),
+cst_create_date DATE,
+dwh_create_date DATETIME2 DEFAULT GETDATE()
+);
+GO
 
---Data standarization and consistency
-SELECT DISTINCT 
-	cst_gender
-FROM silver.crm_cust_info
+IF OBJECT_ID('silver.crm_prd_info') IS NOT NULL 
+	DROP TABLE silver.crm_prd_info;
+GO
 
-/*
-===================================================================
-crm_prd_info
-===================================================================
-*/
+CREATE TABLE silver.crm_prd_info(
+prd_id INT,
+cat_id NVARCHAR(50),
+prd_key NVARCHAR(50),
+prd_nm NVARCHAR(50),
+prd_cost INT,
+prd_line NVARCHAR(50),
+prd_start_dt DATE,
+prd_end_dt DATE,
+dwh_create_date DATETIME2 DEFAULT GETDATE()
+);
+GO
 
---Check for nulls and/or duplicates in the primary key
---Ideally we do not want nulls and/or duplicates
-SELECT 
-	prd_id,
-	COUNT(*)
-FROM silver.crm_prd_info
-GROUP BY prd_id
-HAVING COUNT(*) > 1 or prd_id IS NULL
+IF OBJECT_ID('silver.crm_sales_details') IS NOT NULL 
+	DROP TABLE silver.crm_sales_details;
+GO
 
---Check for unwanted spaces within the data
---Ideally we do not want any trailing or leading unwanted spaces
-SELECT 
-	prd_nm
-FROM silver.crm_prd_info
-WHERE prd_nm != TRIM(prd_nm)
+CREATE TABLE silver.crm_sales_details(
+sls_ord_num NVARCHAR(50),
+sls_prd_key NVARCHAR(50),
+sls_cust_id INT,
+sls_order_dt DATE,
+sls_ship_dt DATE,
+sls_due_dt DATE,
+sls_sales INT,
+sls_quantity INT,
+sls_price INT,
+dwh_create_date DATETIME2 DEFAULT GETDATE()
+);
+GO
 
---Check nulls or negative numbers
---Ideally there should be no nulls or negative numbers
-SELECT 
-	prd_cost
-FROM silver.crm_prd_info
-WHERE prd_cost < 0 OR prd_cost is NULL
+IF OBJECT_ID('silver.erp_cust_az12') IS NOT NULL 
+	DROP TABLE silver.erp_cust_az12;
+GO
 
---Data standarization and consistency
-SELECT DISTINCT 
-	prd_line
-FROM silver.crm_prd_info
+CREATE TABLE silver.erp_cust_az12(
+cid NVARCHAR(50),
+bdate DATE,
+gen NVARCHAR(50),
+dwh_create_date DATETIME2 DEFAULT GETDATE()
+);
+GO
 
---Check for invalid dates 
-SELECT 
-	*
-FROM silver.crm_prd_info
-WHERE prd_end_dt < prd_start_dt
+IF OBJECT_ID('silver.erp_loc_a101') IS NOT NULL 
+	DROP TABLE silver.erp_loc_a101;
+GO
 
-/*
-===================================================================
-crm_sales_details
-===================================================================
-*/
+CREATE TABLE silver.erp_loc_a101(
+cid NVARCHAR(50),
+cntry NVARCHAR(50),
+dwh_create_date DATETIME2 DEFAULT GETDATE()
+);
+GO
 
---Check for invalid dates
-SELECT
-	sls_order_dt
-FROM silver.crm_sales_details
-WHERE sls_order_dt <= 0 OR LEN(sls_order_dt) != 8 OR sls_order_dt > 20500101 OR sls_order_dt < 19000101
+IF OBJECT_ID('silver.erp_px_cat_g1v2') IS NOT NULL 
+	DROP TABLE silver.erp_px_cat_g1v2;
+GO
 
---Check for invalid date orders
-SELECT 
-	*
-FROM silver.crm_sales_details
-WHERE sls_order_dt > sls_ship_dt OR sls_order_dt > sls_due_dt
-
---Check data consistensy between sales, quantinty and price 
---> Sales = quantity * price
---> Must not be NULL, zero or negative
-SELECT DISTINCT 
-	sls_sales,
-	sls_quantity,
-	sls_price
-FROM silver.crm_sales_details
-WHERE sls_sales != sls_quantity * sls_price
-OR sls_sales IS NULL OR sls_quantity IS NULL OR sls_price IS NULL
-OR sls_sales <= 0 OR sls_quantity <= 0 OR sls_price <= 0
-ORDER BY sls_sales, sls_quantity, sls_price
+CREATE TABLE silver.erp_px_cat_g1v2(
+id INT,
+cat NVARCHAR(50),
+subcat NVARCHAR(50),
+maintenance NVARCHAR(50),
+dwh_create_date DATETIME2 DEFAULT GETDATE()
+);
