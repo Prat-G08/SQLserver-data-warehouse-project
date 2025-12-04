@@ -6,7 +6,6 @@ INSERT INTO silver.crm_cust_info (
 	cst_marital_status,
 	cst_gender,
 	cst_create_date)
-
 SELECT
 	cst_id,
 	cst_key,
@@ -69,7 +68,6 @@ INSERT INTO silver.crm_sales_details (
 	sls_sales,
 	sls_quantity,
 	sls_price)
-	
 SELECT 
 	sls_ord_num,
 	sls_prd_key,
