@@ -18,7 +18,7 @@ cst_id INT,
 cst_key NVARCHAR(50),
 cst_firstname NVARCHAR(50),
 cst_lastname NVARCHAR(50),
-cst_material_status NVARCHAR(50),
+cst_marital_status NVARCHAR(50),
 cst_gender NVARCHAR(50),
 cst_create_date DATE,
 dwh_create_date DATETIME2 DEFAULT GETDATE()
@@ -88,7 +88,7 @@ IF OBJECT_ID('silver.erp_px_cat_g1v2') IS NOT NULL
 GO
 
 CREATE TABLE silver.erp_px_cat_g1v2(
-id INT,
+id NVARCHAR(50),
 cat NVARCHAR(50),
 subcat NVARCHAR(50),
 maintenance NVARCHAR(50),
