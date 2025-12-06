@@ -1,6 +1,6 @@
 /*
 ===================================================================
-STORED PROCEDURE: LOADING BRONZE LAYER(BRONZE -> SILVER)
+STORED PROCEDURE: LOADING SILVER LAYER(BRONZE -> SILVER)
 ===================================================================
 Script Purpose: 
 This script creates a stored procedure which performs ETL
